@@ -1,0 +1,72 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:task="http://www.springframework.org/schema/task" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+       http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/task
+http://www.springframework.org/schema/task/spring-task-3.0.xsd">
+        
+   <!-- Scans the classpath for annotated components that will be auto-registered as Spring beans.
+ 			 For example @Controller and @Service. Make sure to set the correct base-package-->
+ 			 <tx:annotation-driven />
+	<mvc:annotation-driven />
+<!-- 	<task:annotation-driven/> -->
+	<context:component-scan base-package="com.sheet.controller"/>
+	<context:component-scan base-package="com.sheet.services" />
+	
+	<bean
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/WEB-INF/jsp/"></property>
+		<property name="suffix" value=".jsp"></property>
+	</bean>
+	<!-- <bean id="pooledDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"
+		destroy-method="close">
+		<property name="driverClass" value="com.mysql.jdbc.Driver" />
+		<property name="jdbcUrl" value="jdbc:mysql://localhost:3306/sheet" />
+		<property name="user" value="bridgeit" />
+		<property name="password" value="root" />
+		<property name="maxPoolSize" value="100" />
+		<property name="minPoolSize" value="3" />
+		<property name="maxStatements" value="4" />
+	</bean> -->
+	<bean id="ds" class="org.springframework.jdbc.datasource.DriverManagerDataSource"> 
+		<property name="driverClassName" value="com.mysql.jdbc.Driver"></property> 
+		<property name="url" value="jdbc:mysql://localhost:3306/sheet"></property> 
+		<property name="username" value="root"></property> 
+		<property name="password" value="root"></property>
+		 </bean> 
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		<property name="dataSource" ref="ds" />
+		<property name="annotatedClasses">
+			<list>
+				<value>
+					com.sheet.model.SheetModel
+				</value>
+			</list>
+		</property>
+
+
+		<!--Hibernate properties -->
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect"> org.hibernate.dialect.MySQLDialect</prop>
+				<prop key="hibernate.show_sql">true</prop>
+				<prop key="hibernate.hbm2ddl.auto">create</prop>
+			</props>
+		</property>
+	</bean>
+	<!--sheetDao depedency injection -->
+	<bean id="sheetDao" class="com.sheet.dao.impl.SheetDaoImpl"></bean>
+
+	<!--sheetServices depedency injection -->
+	<bean id="sheetService" class="com.sheet.services.impl.SheetServiceImpl"></bean>
+	
+	<bean id="transactionManager"
+		class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+	</beans>
