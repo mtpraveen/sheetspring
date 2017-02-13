@@ -21,5 +21,15 @@ public class SheetServiceImpl implements SheetService {
 		List<SheetModel> sheetList =sheetDao.displayAllData();
 		return sheetList;
 	}
+	@Override
+	public List getTimeStampData() {
+		List  timeStampList =sheetDao.getTimeStampData();
+		return timeStampList;
+	}
+	@Override
+	public SheetModel timeStampExist(String timeStamp) {
+		SheetModel sheetModel=sheetDao.timeStampExist(timeStamp);
+		return sheetModel;
+	}
 
 }

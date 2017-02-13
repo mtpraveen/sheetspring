@@ -9,4 +9,8 @@ public interface SheetDao {
 	
 	public  void addSheetData(SheetModel sheetmodel);
 	List<SheetModel> displayAllData();
+	public List getTimeStampData();
+	
+	public SheetModel timeStampExist(String timeStamp);
+	
 }

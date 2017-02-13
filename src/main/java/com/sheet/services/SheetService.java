@@ -9,6 +9,9 @@ public interface SheetService {
 	
 	public  void addSheetData(SheetModel sheetmodel);
 	public List<SheetModel> displayAllData();
+	public List getTimeStampData();
+	
+	public SheetModel timeStampExist(String timeStamp);
 		
 	
 

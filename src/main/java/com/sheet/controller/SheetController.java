@@ -5,9 +5,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -43,7 +46,7 @@ import com.sheet.model.SheetModel;
 import com.sheet.services.SheetService;
 
 @Controller
-/*@EnableScheduling*/
+@EnableScheduling 
 public class SheetController {
 	@Autowired
 	SheetService sheetService;
@@ -113,24 +116,24 @@ public class SheetController {
 				.build();
 	}
 
-	public  String mKey;
-	public  String mURL;
+	public String mKey;
+	public String mURL;
 
 	/*
 	 * public void getAndStore() { try { getSheetData(); } catch (Exception e) {
 	 * // TODO Auto-generated catch block e.printStackTrace(); } }
 	 */
-	
-	
+
 	@RequestMapping(value = "/sheetDetails", method = RequestMethod.GET)
 	public ModelAndView displaySheetDetails(Model model) {
 
 		List<SheetModel> sheetinfo = sheetService.displayAllData();
-		return new ModelAndView("display","sheetDetails",sheetinfo);
+		return new ModelAndView("display", "sheetDetails", sheetinfo);
 
 	}
-	/*@Scheduled(fixedDelay=5000)*/
-	@RequestMapping(value ="/addData", method = RequestMethod.GET)
+
+	@Scheduled(fixedDelay=5000) 
+	@RequestMapping(value = "/addData", method = RequestMethod.GET)
 	private ModelAndView getSheetData() throws Exception {
 		int lId_Col = 1;
 		System.out.println("schedule method");
@@ -143,6 +146,7 @@ public class SheetController {
 
 		ValueRange response = service.spreadsheets().values().get(lSpreadsheetId, lRange).execute();
 		List<List<Object>> lRows = response.getValues();
+		List<Object> lRowHeader = lRows.get(lId_Col);
 		/*
 		 * adding data sql database
 		 */
@@ -150,66 +154,93 @@ public class SheetController {
 			// System.out.println(rows.size());
 			if (lRows != null && lRows.size() > 0) {
 
-				
 				// getting frst row
-				List<Object> lRowHeader = lRows.get(i);
+				/*List<Object> lRowHeader = lRows.get(i);*/
 				// it returns particular row
 				List<Object> lRow = lRows.get(i);
-				/*SimpleDateFormat sdf = new SimpleDateFormat("dd/mm/yyyy MM:hh:ss");
-				Date date = sdf.parse((String) lRow.get(0));
-				java.sql.Date sqldate=new Date(date.getTime());*/
- 
-				sheetmodel.setTimestamp((String)lRow.get(0));
-				
-				sheetmodel.setName((String) lRow.get(1));
-				sheetmodel.setEmail((String) lRow.get(2));
-				sheetmodel.setCompany((String) lRow.get(3));
-        		Document doc = Jsoup.connect((String) lRow.get(4)). ignoreHttpErrors(true).userAgent("Mozilla/5.0").timeout(5000).get();
-            	Element lLinks = doc.getElementsByClass("photoContainer").first();
-                Element lImgTags = lLinks.getElementsByTag("img").get(0);
-         	    String src = lImgTags.attr("src");
-				sheetmodel.setFaceBookURL(src);
-				sheetService.addSheetData(sheetmodel);
+				/*
+				 * SimpleDateFormat sdf = new
+				 * SimpleDateFormat("dd/mm/yyyy MM:hh:ss"); Date date =
+				 * sdf.parse((String) lRow.get(0)); java.sql.Date sqldate=new
+				 * Date(date.getTime());
+				 */
+				String timeStamp = (String) lRow.get(0);
+				SheetModel sheetModel = sheetService.timeStampExist(timeStamp);
+				if (sheetModel == null) {
+					sheetmodel.setTimestamp((String) lRow.get(0));
+					sheetmodel.setName((String) lRow.get(1));
+					sheetmodel.setEmail((String) lRow.get(2));
+					sheetmodel.setCompany((String) lRow.get(3));
+					Document doc = Jsoup.connect((String) lRow.get(4)).ignoreHttpErrors(true).userAgent("Mozilla/5.0")
+							.timeout(5000).get();
+					Element lLinks = doc.getElementsByClass("photoContainer").first();
+					Element lImgTags = lLinks.getElementsByTag("img").get(0);
+					String src = lImgTags.attr("src");
+					sheetmodel.setFaceBookURL(src);
+					sheetService.addSheetData(sheetmodel);
+				} else {
+					continue;
+				}
 			}
 		}
-		
+
 		/**
 		 * adding data to firebase
 		 */
-		 if ( lRows != null && lRows.size() > 0 ) {
-	        	
-	        	//getting frst row
-	        	List<Object> lRowHeader =  lRows.get(0);
-	        	for (int lRowNo = 1;  lRowNo < lRows.size(); lRowNo++) {
-	        		
-	        		//it returns particular row
-	        		List<Object> lRow =  lRows.get(lRowNo);
-	        		Map<String, String> map = new HashMap<String, String>();
-	        		
-	        		//it returns column of that particular row
-	        		for (int lColNo = 0; lColNo < lRow.size(); lColNo++) {
-	        			map.put((String)lRowHeader.get(lColNo), (String)lRow.get( lColNo ));
+		if (lRows != null && lRows.size() > 0) {
+
+			// getting frst row
+			
+			for (int lRowNo = 1; lRowNo < lRows.size(); lRowNo++) {
+				
+				// it returns particular row
+				List<Object> lRow = lRows.get(lRowNo);
+				Map<String, String> map = new HashMap<String, String>();
+
+				// it returns column of that particular row
+				for (int lColNo = 0; lColNo < lRow.size(); lColNo++) {
+					map.put((String) lRowHeader.get(lColNo), (String) lRow.get(lColNo));
+
+				}
+				
+				// facebook profile picture url fetching
+				mURL = map.get("FaceBookURL");
+				// System.out.println(mURL);
+				mKey = map.get(lRowHeader.get(lId_Col));
+				byte[] lImage = null;
+				Document doc = Jsoup.connect(mURL).ignoreHttpErrors(true).userAgent("Mozilla/5.0").timeout(5000).get();
+				Element lLinks = doc.getElementsByClass("photoContainer").first();
+				Element lImgTags = lLinks.getElementsByTag("img").get(0);
+				String src = lImgTags.attr("src");
+				// System.out.println(src);
+				lImage = IOUtils.toByteArray(src);
+
+				// converting to base64 image
+				String lImageFile = Base64.getEncoder().encodeToString(lImage);
+				map.put("image", lImageFile);
+				map.remove("Name");
+				Map<String,String> oldValue = SheetFireBaseDao.fetchDataFromFireBase( map.get(lRowHeader.get(lId_Col)) );
+	        	//	System.out.println(oldValue);
+	        		if( oldValue == null || oldValue.isEmpty()){
+	        			SheetFireBaseDao.saveDataToFireBase(mKey, map);
 	        			
 	        		}
-	        		// facebook profile picture url fetching
-	        		mURL=map.get("FaceBookURL");
-	        		System.out.println(mURL);
-	        		mKey=map.get(  lRowHeader.get(lId_Col) );
-	        		byte[] lImage = null;
-	        		Document doc = Jsoup.connect(mURL). ignoreHttpErrors(true).userAgent("Mozilla/5.0").timeout(5000).get();
-	            	Element lLinks = doc.getElementsByClass("photoContainer").first();
-	                Element lImgTags = lLinks.getElementsByTag("img").get(0);
-	         	    String src = lImgTags.attr("src");
-	         	 //   System.out.println(src);
-	        		lImage = IOUtils.toByteArray(src);
 	        		
-	        		// converting to base64 image
-	        		String lImageFile = Base64.getEncoder().encodeToString(lImage);
-	        		map.put("image", lImageFile);
-	        		map.remove("Name");
-	        		SheetFireBaseDao.saveDataToFireBase( mKey , map );
-	        	}
-	}
-		 return new ModelAndView("display");
+	        		String strNewTime = map.get("Timestamp");
+	        	//	System.out.println(map.get("Timestamp"));
+	        		String stroldTime = oldValue.get("Timestamp");
+	        	//System.out.println(oldValue.get("Timestamp"));
+	        		SimpleDateFormat sdf = new SimpleDateFormat("dd/mm/yyyy MM:hh:ss");
+	        		Date old = sdf.parse(stroldTime);
+	        		Date newd = sdf.parse(strNewTime);
+	        		
+	        		if( newd.after(old))
+	        		{
+	        			SheetFireBaseDao.saveDataToFireBase(mKey, map);
+	        		}
+				/*SheetFireBaseDao.saveDataToFireBase(mKey, map);*/
+			}
+		}
+		return new ModelAndView("display");
 	}
 }
