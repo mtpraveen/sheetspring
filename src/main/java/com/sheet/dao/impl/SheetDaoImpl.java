@@ -37,7 +37,7 @@ public class SheetDaoImpl implements SheetDao {
 	public List<SheetModel> displayAllData() {
 
 		Session sess = mSessionFactory.getCurrentSession();
-		Query qry = sess.createQuery("FROM SheetModel");
+		Query qry = sess.createQuery(" FROM SheetModel");
 		List<SheetModel> sheetInfo = qry.list();
 		return sheetInfo;
 	}
@@ -72,7 +72,7 @@ public class SheetDaoImpl implements SheetDao {
 	@Override
 	public List getURLData() {
 		Session sess = mSessionFactory.getCurrentSession();
-		Query qry = sess.createQuery("SELECT facebookurl FROM SheetModel");
+		Query qry = sess.createQuery("SELECT faceBookURL FROM SheetModel");
 		List sheetURLInfo = qry.list();
 		return sheetURLInfo;
 	}

@@ -14,6 +14,7 @@
 <div class="container">
 	<h3>Spread Sheet Data</h3>
 	<a href="sheetDetails"><button type="button" class="btn btn-primary-lg">View Sheet Data</button></a>
+	<a href="sendmessage">pub sub Data</a>
 	 </div>
 </body>
 </html>

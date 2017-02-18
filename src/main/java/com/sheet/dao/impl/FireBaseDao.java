@@ -27,8 +27,8 @@ private static FirebaseApp mfirebaseApp = null;
 		}
 		FirebaseOptions mOptions=null;
 		try {
-			mOptions = new FirebaseOptions.Builder().setDatabaseUrl("https://spreadsheet-be529.firebaseio.com/").setServiceAccount(new FileInputStream("/home/bridgeit/spreadsheet-694f67dd5d86.json")).build();
-			mfirebaseApp = FirebaseApp.initializeApp(mOptions);
+			mOptions = new FirebaseOptions.Builder().setDatabaseUrl("https://sheet-f131b.firebaseio.com/").setServiceAccount(new FileInputStream("/home/bridgeit/sheet-35461dfea2bd.json")).build();
+			mfirebaseApp = FirebaseApp.initializeApp(mOptions,"mfirebaseApp");
 		}
 		catch (FileNotFoundException e) 
 		{
@@ -38,18 +38,18 @@ private static FirebaseApp mfirebaseApp = null;
 	}
 	
 	//save the data to firebase database
-	public static void saveDataToFireBase(Map<String, String> map)
+	public static void saveDataToFireBase(String name, Map<String, String> map)
 	
 	{	
 		//intialising firebase
-		FirebaseApp firebaseApp = initializeFireBase();
+		initializeFireBase();
 		// As an admin, the app has access to read and write all data, regardless of Security Rules
 		
-		DatabaseReference lRef = FirebaseDatabase.getInstance( firebaseApp ).getReference("URL");
-	//	DatabaseReference lUsersRef = lRef.child(mKey);
-		lRef.setValue(map);
+		DatabaseReference lRef = FirebaseDatabase.getInstance().getReference("URL");
+		DatabaseReference lUsersRef = lRef.child(name);
+		lUsersRef.setValue(map);
 		
-		lRef.addListenerForSingleValueEvent(new ValueEventListener() {
+		lUsersRef.addListenerForSingleValueEvent(new ValueEventListener() {
 		    @Override
 		    public void onDataChange(DataSnapshot pDataSnapshot) {
 		        Object document = pDataSnapshot.getValue();

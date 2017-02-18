@@ -42,13 +42,14 @@ import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.SheetsScopes;
 import com.google.api.services.sheets.v4.model.ValueRange;
+import com.sheet.dao.impl.FireBaseDao;
 import com.sheet.dao.impl.SheetFireBaseDao;
 import com.sheet.model.SheetModel;
 
 import com.sheet.services.SheetService;
 
 @Controller
-@EnableScheduling 
+//@EnableScheduling 
 public class SheetController {
 	@Autowired
 	SheetService mSheetService;
@@ -122,6 +123,8 @@ public class SheetController {
 
 	public  String mKey;
 	public  String mURL;
+	public  String mName;
+	public  String mKeyUrl;
 
 	/**
 	 * get the all details from database based on email.
@@ -150,6 +153,13 @@ public class SheetController {
 		return new ModelAndView("display", "sheetDetails", sheetinfo);
 
 	}
+	@RequestMapping(value = "/sendmessage", method = RequestMethod.GET)
+	public ModelAndView readSheetData() throws Exception {
+
+		mPublisher.sendMessage();
+		return new ModelAndView("success");
+
+	}
 	
 	/**
 	 * get the all data from sheet and store it in a database.
@@ -157,7 +167,7 @@ public class SheetController {
 	 * @return display jsp page.
 	 *
 	 */
-	@Scheduled(fixedDelay=5000) 
+//	@Scheduled(fixedDelay=5000) 
 	@RequestMapping(value = "/addData", method = RequestMethod.GET)
 	public ModelAndView getSheetData() throws Exception {
 		int lId_Col = 0;
@@ -231,7 +241,9 @@ public class SheetController {
 				
 				// facebook profile picture url fetching
 				mKey=map.get(  lRowHeader.get(lId_Col) );
+				mKeyUrl=map.get(  lRowHeader.get(1) );
 				mURL=map.get("FaceBookURL");
+				mName=map.get("Name");
 			//	System.out.println("==="+mURL);
 				Document doc = Jsoup.connect((String)(mURL)). ignoreHttpErrors(true).userAgent("Mozilla/5.0").timeout(5000).get();
             	Element lLinks = doc.getElementsByClass("photoContainer").first();
@@ -276,5 +288,19 @@ public class SheetController {
 		return new ModelAndView("display");
 		
 	}
-	
+	public ModelAndView updateDatabse()
+	{
+		List getURLdata =mSheetService.getURLData();
+		Map<String, String> map = new HashMap<String, String>();
+		for (Iterator iterator = getURLdata.iterator(); iterator.hasNext();) {
+			String url =  (String) iterator.next();
+			
+			
+			map.put(mKeyUrl, url);
+			
+			
+		}
+		FireBaseDao.saveDataToFireBase(mKeyUrl,map);
+		return null;
+	}
 }

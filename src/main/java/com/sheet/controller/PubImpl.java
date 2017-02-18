@@ -13,8 +13,8 @@ import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
 
 public class PubImpl {
 //	Logger LOGGER = Logger.getLogger("PUBIMPL");
-	/*@Autowired
-	SheetController  mSheetController;*/
+	@Autowired
+	SheetController  mSheetController;
 	@Autowired
 	StringRedisTemplate template;
 	@Autowired
@@ -72,9 +72,9 @@ public class PubImpl {
         System.out.println("Publisher Method Running....");
         System.out.println("Storing sheet info to Db......");
 //		LOGGER.info("Sending message...");
-        SheetController sc=new SheetController();
-        sc.getSheetData();
-	//	mSheetController.getSheetData(); 
+      /*  SheetController sc=new SheetController();
+        sc.getSheetData();*/
+		mSheetController.getSheetData(); 
 		System.out.println(" updated to Db");
 		template.convertAndSend("chat", "sheet data updated to Db");
 		latch.await();

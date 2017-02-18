@@ -7,8 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public class SubImpl {
 //	Logger LOGGER = Logger.getLogger("SUBIMPL");
-	/*@Autowired
-	SheetControllerRedis  mSheetControllerRedis;*/
+	@Autowired
+	SheetControllerRedis  mSheetControllerRedis;
 	private CountDownLatch latch;
 
 	@Autowired
@@ -26,10 +26,8 @@ public class SubImpl {
 	 */
 	public void receiveMessage(String message) {
 		System.out.println("Reciver Method....");
-	//	LOGGER.info("Received <" + message + ">");
-		SheetControllerRedis scr=new SheetControllerRedis();
-		scr.updateDatabse();
-		System.out.println("Game Info updated");
+		mSheetControllerRedis.updateDatabse();
+		System.out.println("Info updated");
 		latch.countDown();
 	}
 }

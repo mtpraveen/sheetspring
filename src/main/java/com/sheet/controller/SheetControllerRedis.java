@@ -21,6 +21,8 @@ public class SheetControllerRedis {
 	@Autowired
 	SheetService sheetService;
 	
+	public String name;
+	public String url;
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public ModelAndView displaySheetDetails(Model model) {
 
@@ -31,15 +33,20 @@ public class SheetControllerRedis {
 	
 	public ModelAndView updateDatabse()
 	{
-		List getURLdata =sheetService.getURLData();
-		for (Iterator iterator = getURLdata.iterator(); iterator.hasNext();) {
-			String url = (String) iterator.next();
-			Map<String, String> map = new HashMap<String, String>();
-			int i=1;
-			map.put("URL", url);
-			FireBaseDao.saveDataToFireBase(map);
-			
+		
+		List<SheetModel> getdata =sheetService.displayAllData();
+		Map<String, String> map = new HashMap<String, String>();
+		for(SheetModel l:getdata)
+		{
+			System.out.println(l.getFaceBookURL());
+			System.out.println("---------------");
+			System.out.println(l.getName());
+			 url=l.getFaceBookURL();
+			name=l.getName();
+			map.put(name, url);
+			FireBaseDao.saveDataToFireBase(name,map);
 		}
+		
 		return null;
 	}
 }
