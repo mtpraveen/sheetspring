@@ -63,7 +63,13 @@ http://www.springframework.org/schema/task/spring-task-3.0.xsd">
 	<bean id="sheetDao" class="com.sheet.dao.impl.SheetDaoImpl"></bean>
 
 	<!--sheetServices depedency injection -->
+	<bean id="connectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory">
+		</bean>
 	<bean id="sheetService" class="com.sheet.services.impl.SheetServiceImpl"></bean>
+	<!-- <bean id="mSheetControllerRedis" class="com.sheet.controller.SheetControllerRedis"></bean>
+	<bean id="mSheetController" class="com.sheet.controller.SheetController"></bean> -->
+	
+	<bean id="mPublisher"   class="com.sheet.controller.PubImpl" ></bean>
 	
 	<bean id="transactionManager"
 		class="org.springframework.orm.hibernate4.HibernateTransactionManager">

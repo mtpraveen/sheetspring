@@ -16,7 +16,7 @@ import com.sheet.model.SheetModel;
 import java.util.List; 
 import java.util.ArrayList; 
 
-public class SheetFireBaseDao {
+public class FireBaseDao {
 private static FirebaseApp mfirebaseApp = null;
 	
 	//Initialise the firebase database
@@ -38,22 +38,22 @@ private static FirebaseApp mfirebaseApp = null;
 	}
 	
 	//save the data to firebase database
-	public static void saveDataToFireBase(String mKey, Map<String, String> map)
+	public static void saveDataToFireBase(Map<String, String> map)
 	
 	{	
 		//intialising firebase
 		FirebaseApp firebaseApp = initializeFireBase();
 		// As an admin, the app has access to read and write all data, regardless of Security Rules
 		
-		DatabaseReference lRef = FirebaseDatabase.getInstance( firebaseApp ).getReference("Engineer");
-		DatabaseReference lUsersRef = lRef.child(mKey);
-		lUsersRef.setValue(map);
+		DatabaseReference lRef = FirebaseDatabase.getInstance( firebaseApp ).getReference("URL");
+	//	DatabaseReference lUsersRef = lRef.child(mKey);
+		lRef.setValue(map);
 		
 		lRef.addListenerForSingleValueEvent(new ValueEventListener() {
 		    @Override
 		    public void onDataChange(DataSnapshot pDataSnapshot) {
 		        Object document = pDataSnapshot.getValue();
-		     //   System.out.println(document);
+		        System.out.println(document);
 		    }
 			@Override
 			public void onCancelled(DatabaseError arg0) {
@@ -71,10 +71,10 @@ private static FirebaseApp mfirebaseApp = null;
 		FirebaseApp firebaseApp = initializeFireBase();
 		
 		// As an admin, the app has access to read and write all data, regardless of Security Rules
-		DatabaseReference lRef = FirebaseDatabase.getInstance(firebaseApp).getReference("Engineer");
+		DatabaseReference lRef = FirebaseDatabase.getInstance(firebaseApp).getReference("URL");
 		DatabaseReference lUsersRef = lRef.child(pKey);
 		
-		ValueEventListener postListener = new ValueEventListener() {
+		/*ValueEventListener postListener = new ValueEventListener() {
 		    @Override
 		   public void onDataChange(DataSnapshot pDataSnapshot) {
 		    	for (DataSnapshot child : pDataSnapshot.getChildren()) {
@@ -89,7 +89,7 @@ private static FirebaseApp mfirebaseApp = null;
 		    public void onCancelled(DatabaseError pDatabaseError) {
 		        System.out.println("The read failed: " + pDatabaseError.getCode());
 		    }
-		};
+		};*/
 		/*lRef.addValueEventListener(postListener);*/
 		
 		return null;
