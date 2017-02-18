@@ -38,15 +38,15 @@ private static FirebaseApp mfirebaseApp = null;
 	}
 	
 	//save the data to firebase database
-	public static void saveDataToFireBase(String name, Map<String, String> map)
+	public static void saveDataToFireBase(String mKey, Map<String, String> map)
 	
 	{	
 		//intialising firebase
-		initializeFireBase();
+		FirebaseApp firebaseApp=initializeFireBase();
 		// As an admin, the app has access to read and write all data, regardless of Security Rules
 		
-		DatabaseReference lRef = FirebaseDatabase.getInstance().getReference("URL");
-		DatabaseReference lUsersRef = lRef.child(name);
+		DatabaseReference lRef = FirebaseDatabase.getInstance(firebaseApp).getReference("URL");
+		DatabaseReference lUsersRef = lRef.child(mKey);
 		lUsersRef.setValue(map);
 		
 		lUsersRef.addListenerForSingleValueEvent(new ValueEventListener() {

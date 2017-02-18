@@ -23,6 +23,7 @@ public class SheetControllerRedis {
 	
 	public String name;
 	public String url;
+	public String mKey;
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public ModelAndView displaySheetDetails(Model model) {
 
@@ -36,6 +37,10 @@ public class SheetControllerRedis {
 		
 		List<SheetModel> getdata =sheetService.displayAllData();
 		Map<String, String> map = new HashMap<String, String>();
+		for(SheetModel li:getdata)
+		{
+			mKey=li.getTimestamp();
+		
 		for(SheetModel l:getdata)
 		{
 			System.out.println(l.getFaceBookURL());
@@ -44,7 +49,9 @@ public class SheetControllerRedis {
 			 url=l.getFaceBookURL();
 			name=l.getName();
 			map.put(name, url);
-			FireBaseDao.saveDataToFireBase(name,map);
+			
+		}
+		FireBaseDao.saveDataToFireBase(mKey,map);
 		}
 		
 		return null;
