@@ -1,11 +1,13 @@
 package com.sheet.controller;
 
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Date;
@@ -13,6 +15,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.jsoup.Jsoup;
@@ -24,10 +30,13 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.web.util.RedirectUrlBuilder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
@@ -42,6 +51,7 @@ import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.SheetsScopes;
 import com.google.api.services.sheets.v4.model.ValueRange;
+import com.google.gson.Gson;
 import com.sheet.dao.impl.FireBaseDao;
 import com.sheet.dao.impl.SheetFireBaseDao;
 import com.sheet.model.SheetModel;
@@ -49,10 +59,11 @@ import com.sheet.model.SheetModel;
 import com.sheet.services.SheetService;
 
 @Controller
-//@EnableScheduling 
+//@EnableScheduling
 public class SheetController {
 	@Autowired
 	SheetService mSheetService;
+	
 	@Autowired
 	PubImpl mPublisher;
 
@@ -121,15 +132,13 @@ public class SheetController {
 				.build();
 	}
 
-	public  String mKey;
-	public  String mURL;
-	public  String mName;
-	public  String mKeyUrl;
+	public String mKey;
+	public String mURL;
 
 	/**
 	 * get the all details from database based on email.
 	 * 
-	 * @return  jsp page.
+	 * @return jsp page.
 	 * @param String
 	 */
 	@RequestMapping(value = "/sheetList", method = RequestMethod.GET)
@@ -139,20 +148,24 @@ public class SheetController {
 		return new ModelAndView("enggDetails", "sheetinfo", sheetinfo);
 
 	}
+
 	/**
 	 * get the all details from database.
 	 * 
 	 * @return display jsp page.
 	 *
 	 */
-	
+
 	@RequestMapping(value = "/sheetDetails", method = RequestMethod.GET)
 	public ModelAndView displaySheetDetails(Model model) {
 
 		List<SheetModel> sheetinfo = mSheetService.displayAllData();
+	//	System.out.println(sheetinfo.get(1));
+		model.addAttribute("name","DHM");
 		return new ModelAndView("display", "sheetDetails", sheetinfo);
 
 	}
+
 	@RequestMapping(value = "/sendmessage", method = RequestMethod.GET)
 	public ModelAndView readSheetData() throws Exception {
 
@@ -160,14 +173,37 @@ public class SheetController {
 		return new ModelAndView("success");
 
 	}
-	
+	@RequestMapping(value = "/getSuggestion", method = RequestMethod.POST, produces = "application/json")
+	public @ResponseBody void getSuggestion(HttpServletResponse response, HttpServletRequest request) {
+
+		String term = request.getParameter("term");
+		System.out.println("term" + term);
+
+		response.setContentType("application/json");
+		try {
+
+			String searchList = new Gson().toJson(mSheetService.getSuggestion(term));
+
+			System.out.println("search List::-" + searchList);
+			response.getWriter().write(searchList);
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}
+	@RequestMapping(value="getSearchNameData",method=RequestMethod.POST)
+	public ModelAndView getSearchNameData(@RequestParam("name") String pName){
+		List<SheetModel> searchData = mSheetService.getSearchNameData(pName);
+		return new ModelAndView("searchDetails", "searchData", searchData);
+	}
 	/**
 	 * get the all data from sheet and store it in a database.
 	 * 
 	 * @return display jsp page.
 	 *
 	 */
-//	@Scheduled(fixedDelay=5000) 
+	@Scheduled(fixedDelay = 5000)
 	@RequestMapping(value = "/addData", method = RequestMethod.GET)
 	public ModelAndView getSheetData() throws Exception {
 		int lId_Col = 0;
@@ -181,7 +217,7 @@ public class SheetController {
 
 		ValueRange response = service.spreadsheets().values().get(lSpreadsheetId, lRange).execute();
 		List<List<Object>> lRows = response.getValues();
-		/*List<Object> lRowHeader = lRows.get(lId_Col);*/
+		/* List<Object> lRowHeader = lRows.get(lId_Col); */
 		/*
 		 * adding data sql database
 		 */
@@ -190,15 +226,8 @@ public class SheetController {
 			if (lRows != null && lRows.size() > 0) {
 
 				// getting frst row
-				/*List<Object> lRowHeader = lRows.get(i);*/
 				// it returns particular row
 				List<Object> lRow = lRows.get(i);
-				/*
-				 * SimpleDateFormat sdf = new
-				 * SimpleDateFormat("dd/mm/yyyy MM:hh:ss"); Date date =
-				 * sdf.parse((String) lRow.get(0)); java.sql.Date sqldate=new
-				 * Date(date.getTime());
-				 */
 				String timeStamp = (String) lRow.get(0);
 				SheetModel sheetModel = mSheetService.timeStampExist(timeStamp);
 				if (sheetModel == null) {
@@ -206,101 +235,19 @@ public class SheetController {
 					sheetmodel.setName((String) lRow.get(1));
 					sheetmodel.setEmail((String) lRow.get(2));
 					sheetmodel.setCompany((String) lRow.get(3));
-					Document doc = Jsoup.connect((String) lRow.get(4)).ignoreHttpErrors(true).userAgent("Mozilla/5.0")
-							.timeout(5000).get();
-					Element lLinks = doc.getElementsByClass("photoContainer").first();
-					Element lImgTags = lLinks.getElementsByTag("img").get(0);
-					String src = lImgTags.attr("src");
-					sheetmodel.setFaceBookURL(src);
+					sheetmodel.setProfilePicture((String) lRow.get(4));
+					sheetmodel.setHiringCity((String) lRow.get(5));
+					sheetmodel.setCompanyLocation((String) lRow.get(6));
+					sheetmodel.setEnggStatus((String) lRow.get(7));
+					sheetmodel.setDomain((String) lRow.get(8));
 					mSheetService.addSheetData(sheetmodel);
 				} else {
 					continue;
 				}
 			}
 		}
-
-		/**
-		 * adding data to firebase
-		 */
-		
-		if (lRows != null && lRows.size() > 0) {
-
-			// getting frst row
-			List<Object> lRowHeader = lRows.get(lId_Col);
-			for (int lRowNo = 1; lRowNo < lRows.size(); lRowNo++) {
-				
-				// it returns particular row
-				List<Object> lRow = lRows.get(lRowNo);
-				Map<String, String> map = new HashMap<String, String>();
-
-				// it returns column of that particular row
-				for (int lColNo = 0; lColNo < lRow.size(); lColNo++) {
-					map.put((String) lRowHeader.get(lColNo), (String) lRow.get(lColNo));
-
-				}
-				
-				// facebook profile picture url fetching
-				mKey=map.get(  lRowHeader.get(lId_Col) );
-				mKeyUrl=map.get(  lRowHeader.get(1) );
-				mURL=map.get("FaceBookURL");
-				mName=map.get("Name");
-			//	System.out.println("==="+mURL);
-				Document doc = Jsoup.connect((String)(mURL)). ignoreHttpErrors(true).userAgent("Mozilla/5.0").timeout(5000).get();
-            	Element lLinks = doc.getElementsByClass("photoContainer").first();
-                Element lImgTags = doc.getElementsByTag("img").first();
-         	    String src = lImgTags.attr("src");
-         	    
-         	 //   System.out.println(src);
-        	/*	lImage = IOUtils.toByteArray(src);
-        		
-        		// converting to base64 image
-        		String lImageFile = Base64.getEncoder().encodeToString(lImage);*/
-        		map.put("image", src);
-				Map<String,String> oldValue = SheetFireBaseDao.fetchDataFromFireBase(mKey);
-
-	        	//	System.out.println("========="+oldValue);
-	        		if( oldValue == null || oldValue.isEmpty()){
-	        			SheetFireBaseDao.saveDataToFireBase(mKey, map);
-	        			
-	        			
-	        		}
-	        		else
-	        		{
-	        		
-	        		String strNewTime = map.get("Timestamp");
-	        	//	System.out.println(map.get("Timestamp"));
-	        		String stroldTime = oldValue.get("Timestamp");
-	        	//System.out.println(oldValue.get("Timestamp"));
-	        		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy MM:hh:ss");
-	        		Date old = sdf.parse(stroldTime);
-	        		Date newd = sdf.parse(strNewTime);
-	        		
-	        		if( newd.after(old))
-	        		{
-	        			SheetFireBaseDao.saveDataToFireBase(mKey, map);
-	        		}
-	        		}
-	        	
-			}
-			SheetFireBaseDao.fetchDataFromFireBase(mKey);
-		//	mPublisher.sendMessage();
-		}
 		return new ModelAndView("display");
-		
+
 	}
-	public ModelAndView updateDatabse()
-	{
-		List getURLdata =mSheetService.getURLData();
-		Map<String, String> map = new HashMap<String, String>();
-		for (Iterator iterator = getURLdata.iterator(); iterator.hasNext();) {
-			String url =  (String) iterator.next();
-			
-			
-			map.put(mKeyUrl, url);
-			
-			
-		}
-		FireBaseDao.saveDataToFireBase(mKeyUrl,map);
-		return null;
-	}
+
 }

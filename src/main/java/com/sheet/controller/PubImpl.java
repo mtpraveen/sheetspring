@@ -54,31 +54,17 @@ public class PubImpl {
 	StringRedisTemplate template(RedisConnectionFactory connectionFactory) {
 		return new StringRedisTemplate(connectionFactory);
 	}
-
-/*	public void sendMessage() throws InterruptedException {
-         System.out.println("Publisher Method Running....");
-         System.out.println("Storing CSV info to Db......");
-		 LOGGER.info("Sending message...");
-		 for (int i = 0; i < 10; i++) {
-			System.out.println(i);
-		 }
-		System.out.println("CSV file updated to Db");
-		template.convertAndSend("chat", "CSV file updated to Db");
-		latch.await();
-		//System.exit(0);
-
-	}*/
+	
+	 // Publisher method
+	 
 	public void sendMessage() throws Exception {
         System.out.println("Publisher Method Running....");
         System.out.println("Storing sheet info to Db......");
 //		LOGGER.info("Sending message...");
-      /*  SheetController sc=new SheetController();
-        sc.getSheetData();*/
 		mSheetController.getSheetData(); 
 		System.out.println(" updated to Db");
 		template.convertAndSend("chat", "sheet data updated to Db");
 		latch.await();
-		//System.exit(0);
 
 	}
 }

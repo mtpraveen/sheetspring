@@ -28,8 +28,17 @@ public class SheetModel {
 	private String email;
 	@Column(name = "company")
 	private String company;
-	@Column(name = "facebookurl")
-	private String faceBookURL;
+	@Column(name = "profilepic")
+	private String profilePicture;
+	@Column(name = "domain")
+	private String domain;
+	@Column(name = "hiringCity")
+	private String hiringCity;
+	@Column(name = "companyLocation")
+	private String companyLocation;
+	@Column(name = "enggStatus")
+	private String enggStatus;
+	
 	public int getEnggId() {
 		return enggId;
 	}
@@ -72,18 +81,7 @@ public class SheetModel {
 	public void setCompany(String company) {
 		this.company = company;
 	}
-	/**
-     * @return the faceBookURL
-     */
-	public String getFaceBookURL() {
-		return faceBookURL;
-	}
-	/**
-     * @param apiKey the faceBookURL to set
-     */
-	public void setFaceBookURL(String faceBookURL) {
-		this.faceBookURL = faceBookURL;
-	}
+	
 	/**
      * @return the timestamp
      */
@@ -96,6 +94,40 @@ public class SheetModel {
 	public void setTimestamp(String timestamp) {
 		this.timestamp = timestamp;
 	}
+	/**
+     * @return the ProfilePicture
+     */
+	public String getProfilePicture() {
+		return profilePicture;
+	}
+	public void setProfilePicture(String profilePicture) {
+		this.profilePicture = profilePicture;
+	}
+	public String getDomain() {
+		return domain;
+	}
+	public void setDomain(String domain) {
+		this.domain = domain;
+	}
+	public String getHiringCity() {
+		return hiringCity;
+	}
+	public void setHiringCity(String hiringCity) {
+		this.hiringCity = hiringCity;
+	}
+	public String getCompanyLocation() {
+		return companyLocation;
+	}
+	public void setCompanyLocation(String companyLocation) {
+		this.companyLocation = companyLocation;
+	}
+	public String getEnggStatus() {
+		return enggStatus;
+	}
+	public void setEnggStatus(String enggStatus) {
+		this.enggStatus = enggStatus;
+	}
+	
 	
 	
 	

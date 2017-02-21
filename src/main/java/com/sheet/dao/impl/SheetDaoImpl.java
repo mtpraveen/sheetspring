@@ -1,7 +1,7 @@
 package com.sheet.dao.impl;
 
+import java.util.ArrayList;
 import java.util.List;
-
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -76,6 +76,37 @@ public class SheetDaoImpl implements SheetDao {
 		List sheetURLInfo = qry.list();
 		return sheetURLInfo;
 	}
-	
-	
+	/** get suggestion data from database. */
+
+	@Override
+	public List<String> getSuggestion(String name) {
+		Session sess = mSessionFactory.getCurrentSession();
+		System.out.println("Inside Suggestion"+name);
+		Query query = sess.createQuery("from SheetModel where name like :enggName");
+		query.setString("enggName", name+"%");
+		List<SheetModel> res = query.list();
+		System.out.println(res.size());
+		List<String> list = new ArrayList();
+		for(int i=0;i<res.size();i++){
+			list.add(res.get(i).getName());
+		}
+		System.out.println("Result :-"+list);
+		System.out.println("Inside getbyname : "+list.size());
+		// checking result
+		return list;
+
+	}
+	/** get Search Name  data from database. */
+	@Override
+	public List<SheetModel> getSearchNameData(String pName) {
+		Session sess = mSessionFactory.getCurrentSession();
+		Query qry = sess.createQuery("from SheetModel where name=:Name");
+		qry.setParameter("Name", pName);
+		List<SheetModel> SearchNameData = qry.list();
+		return SearchNameData;
+	}
 }
+	
+	
+	
+

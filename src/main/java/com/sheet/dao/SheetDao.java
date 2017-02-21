@@ -2,6 +2,7 @@ package com.sheet.dao;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.sheet.model.SheetModel;
 
@@ -22,5 +23,9 @@ public interface SheetDao {
 	
 	/** get url data . */
 	public List getURLData();
+
+	public List getSuggestion(String name);
+
+	public List<SheetModel> getSearchNameData(String pName);
 	
 }

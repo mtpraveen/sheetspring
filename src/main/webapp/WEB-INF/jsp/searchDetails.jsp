@@ -17,7 +17,7 @@
 	cellspacing="10px" align="center">
 	
 	
-	<c:forEach var="data" items="${sheetinfo}">
+	<c:forEach var="data" items="${searchData}">
 	
 	<tr>
 			
@@ -57,6 +57,7 @@
 			<th>Company Location</th>
 			<td>${data.companyLocation}</td>
 		</tr>
+		<tr>
 		<tr>
 		<tr>
 

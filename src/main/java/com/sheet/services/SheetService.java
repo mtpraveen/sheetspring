@@ -2,6 +2,7 @@ package com.sheet.services;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.sheet.model.SheetModel;
 
@@ -23,6 +24,11 @@ public interface SheetService {
 	
 	/** get url data . */
 	public List getURLData();
+
+	public List<String> getSuggestion(String name);
+
+	public List<SheetModel> getSearchNameData(String pName);
+
 		
 	
 

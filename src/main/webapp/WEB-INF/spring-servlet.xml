@@ -13,6 +13,11 @@ http://www.springframework.org/schema/task/spring-task-3.0.xsd">
  			 For example @Controller and @Service. Make sure to set the correct base-package-->
  			 <tx:annotation-driven />
 	<mvc:annotation-driven />
+	<!--To specify the resource locations -->
+	<mvc:resources location="/images/" mapping="/images/**" />
+	<mvc:resources mapping="/resources/**" location="/resources/" /> 
+	
+	
 <!-- 	<task:annotation-driven/> -->
 	<context:component-scan base-package="com.sheet.controller"/>
 	<context:component-scan base-package="com.sheet.services" />
@@ -22,6 +27,11 @@ http://www.springframework.org/schema/task/spring-task-3.0.xsd">
 		<property name="prefix" value="/WEB-INF/jsp/"></property>
 		<property name="suffix" value=".jsp"></property>
 	</bean>
+	<!-- <bean id="messageSource"
+		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		<property name="basename" value="resources/messages" />
+		<property name="defaultEncoding" value="UTF-8" />
+	</bean> -->
 	<!-- <bean id="pooledDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"
 		destroy-method="close">
 		<property name="driverClass" value="com.mysql.jdbc.Driver" />
@@ -32,13 +42,17 @@ http://www.springframework.org/schema/task/spring-task-3.0.xsd">
 		<property name="minPoolSize" value="3" />
 		<property name="maxStatements" value="4" />
 	</bean> -->
+	
+	<!-- sql configuration details -->
 	<bean id="ds" class="org.springframework.jdbc.datasource.DriverManagerDataSource"> 
 		<property name="driverClassName" value="com.mysql.jdbc.Driver"></property> 
 		<property name="url" value="jdbc:mysql://localhost:3306/sheet"></property> 
 		<property name="username" value="root"></property> 
 		<property name="password" value="root"></property>
 		 </bean> 
-	<bean id="sessionFactory"
+		 
+	<!-- sql configuration details -->
+	<bean id="mSessionFactory"
 		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
 		<property name="dataSource" ref="ds" />
 		<property name="annotatedClasses">
@@ -60,12 +74,12 @@ http://www.springframework.org/schema/task/spring-task-3.0.xsd">
 		</property>
 	</bean>
 	<!--sheetDao depedency injection -->
-	<bean id="sheetDao" class="com.sheet.dao.impl.SheetDaoImpl"></bean>
+	<bean id="mSheetDao" class="com.sheet.dao.impl.SheetDaoImpl"></bean>
 
 	<!--sheetServices depedency injection -->
 	<bean id="connectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory">
 		</bean>
-	<bean id="sheetService" class="com.sheet.services.impl.SheetServiceImpl"></bean>
+	<bean id="mSheetService" class="com.sheet.services.impl.SheetServiceImpl"></bean>
 	<!-- <bean id="mSheetControllerRedis" class="com.sheet.controller.SheetControllerRedis"></bean>
 	<bean id="mSheetController" class="com.sheet.controller.SheetController"></bean> -->
 	
@@ -73,6 +87,6 @@ http://www.springframework.org/schema/task/spring-task-3.0.xsd">
 	
 	<bean id="transactionManager"
 		class="org.springframework.orm.hibernate4.HibernateTransactionManager">
-		<property name="sessionFactory" ref="sessionFactory" />
+		<property name="sessionFactory" ref="mSessionFactory" />
 	</bean>
 	</beans>

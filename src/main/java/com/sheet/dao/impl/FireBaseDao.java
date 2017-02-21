@@ -14,7 +14,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.internal.Log;
 import com.sheet.model.SheetModel;
 import java.util.List; 
-import java.util.ArrayList; 
+import java.util.ArrayList;
+import java.util.HashMap; 
 
 public class FireBaseDao {
 private static FirebaseApp mfirebaseApp = null;
@@ -45,7 +46,7 @@ private static FirebaseApp mfirebaseApp = null;
 		FirebaseApp firebaseApp=initializeFireBase();
 		// As an admin, the app has access to read and write all data, regardless of Security Rules
 		
-		DatabaseReference lRef = FirebaseDatabase.getInstance(firebaseApp).getReference("URL");
+		DatabaseReference lRef = FirebaseDatabase.getInstance(firebaseApp).getReference("Engineers");
 		DatabaseReference lUsersRef = lRef.child(mKey);
 		lUsersRef.setValue(map);
 		
@@ -65,14 +66,14 @@ private static FirebaseApp mfirebaseApp = null;
 	}
 	
 	//fetch the data from firebase database
-	public static Map<String, String> fetchDataFromFireBase(String pKey)
+	public static Map<String, String> fetchDataFromFireBase(String mKey)
 	{	
 		//intialising firebase
 		FirebaseApp firebaseApp = initializeFireBase();
 		
 		// As an admin, the app has access to read and write all data, regardless of Security Rules
-		DatabaseReference lRef = FirebaseDatabase.getInstance(firebaseApp).getReference("URL");
-		DatabaseReference lUsersRef = lRef.child(pKey);
+		DatabaseReference lRef = FirebaseDatabase.getInstance(firebaseApp).getReference("Engineers");
+		DatabaseReference lUsersRef = lRef.child(mKey);
 		
 		/*ValueEventListener postListener = new ValueEventListener() {
 		    @Override

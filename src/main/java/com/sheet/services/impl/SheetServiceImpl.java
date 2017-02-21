@@ -1,6 +1,7 @@
 package com.sheet.services.impl;
 
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -11,14 +12,14 @@ import com.sheet.services.SheetService;
 public class SheetServiceImpl implements SheetService {
 	
 	@Autowired
-	private SheetDao sheetDao;
+	private SheetDao mSheetDao;
 	
 	/**
 	 * adding data to sql
 	 */
 	@Override
 	public void addSheetData(SheetModel sheetmodel) {
-			sheetDao.addSheetData(sheetmodel);
+			mSheetDao.addSheetData(sheetmodel);
 			
 	}
 	/**
@@ -26,7 +27,7 @@ public class SheetServiceImpl implements SheetService {
 	 */
 	@Override
 	public List<SheetModel> displayAllData() {
-		List<SheetModel> sheetList =sheetDao.displayAllData();
+		List<SheetModel> sheetList =mSheetDao.displayAllData();
 		return sheetList;
 	}
 	/**
@@ -34,7 +35,7 @@ public class SheetServiceImpl implements SheetService {
 	 */
 	@Override
 	public List getTimeStampData() {
-		List  timeStampList =sheetDao.getTimeStampData();
+		List  timeStampList =mSheetDao.getTimeStampData();
 		return timeStampList;
 	}
 	/**
@@ -42,7 +43,7 @@ public class SheetServiceImpl implements SheetService {
 	 */
 	@Override
 	public SheetModel timeStampExist(String timeStamp) {
-		SheetModel sheetModel=sheetDao.timeStampExist(timeStamp);
+		SheetModel sheetModel=mSheetDao.timeStampExist(timeStamp);
 		return sheetModel;
 	}
 	/**
@@ -50,7 +51,7 @@ public class SheetServiceImpl implements SheetService {
 	 */
 	@Override
 	public List<SheetModel> displayAllDetails(String enggId) {
-		List<SheetModel> sheetDetails = sheetDao.displayAllDetails(enggId);
+		List<SheetModel> sheetDetails = mSheetDao.displayAllDetails(enggId);
 		return sheetDetails;
 	}
 	/**
@@ -58,8 +59,19 @@ public class SheetServiceImpl implements SheetService {
 	 */
 	@Override
 	public List getURLData() {
-		List  sheetURLList =sheetDao.getURLData();
+		List  sheetURLList =mSheetDao.getURLData();
 		return sheetURLList;
 	}
+	@Override
+	public List<String> getSuggestion(String name) {
+		List  sheetSuggestion =mSheetDao.getSuggestion(name);
+		return sheetSuggestion;
+	}
+	@Override
+	public List<SheetModel> getSearchNameData(String pName) {
+		List<SheetModel> sheetSearchDetails = mSheetDao.getSearchNameData(pName);
+		return sheetSearchDetails;
+	}
+	
 
 }
