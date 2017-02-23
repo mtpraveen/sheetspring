@@ -23,9 +23,10 @@ public interface SheetDao {
 	
 	/** get url data . */
 	public List getURLData();
-
+	
+	/** get  suggestion data from database based on keyword . */
 	public List getSuggestion(String name);
-
+	/** get  data from database based on keyword . */
 	public List<SheetModel> getSearchNameData(String pName);
 	
 }

@@ -103,27 +103,52 @@ public class SheetModel {
 	public void setProfilePicture(String profilePicture) {
 		this.profilePicture = profilePicture;
 	}
+	/**
+     * @return domain the name
+     */
 	public String getDomain() {
 		return domain;
 	}
+	/**
+     * @param domain the name to set
+     */
+	
 	public void setDomain(String domain) {
 		this.domain = domain;
 	}
+	/**
+     * @return city the name
+     */
 	public String getHiringCity() {
 		return hiringCity;
 	}
+	/**
+     * @param city the name to set
+     */
 	public void setHiringCity(String hiringCity) {
 		this.hiringCity = hiringCity;
 	}
+	/**
+     * @return company location the name
+     */
 	public String getCompanyLocation() {
 		return companyLocation;
 	}
+	/**
+     * @param companyLocation the name to set
+     */
 	public void setCompanyLocation(String companyLocation) {
 		this.companyLocation = companyLocation;
 	}
+	/**
+     * @return enggStatus
+     */
 	public String getEnggStatus() {
 		return enggStatus;
 	}
+	/**
+     * @param enggStatus the name to set
+     */
 	public void setEnggStatus(String enggStatus) {
 		this.enggStatus = enggStatus;
 	}

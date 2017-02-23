@@ -54,7 +54,7 @@ private static FirebaseApp mfirebaseApp = null;
 		    @Override
 		    public void onDataChange(DataSnapshot pDataSnapshot) {
 		        Object document = pDataSnapshot.getValue();
-		        System.out.println(document);
+		//        System.out.println(document);
 		    }
 			@Override
 			public void onCancelled(DatabaseError arg0) {
@@ -75,14 +75,13 @@ private static FirebaseApp mfirebaseApp = null;
 		DatabaseReference lRef = FirebaseDatabase.getInstance(firebaseApp).getReference("Engineers");
 		DatabaseReference lUsersRef = lRef.child(mKey);
 		
-		/*ValueEventListener postListener = new ValueEventListener() {
+		ValueEventListener postListener = new ValueEventListener() {
 		    @Override
 		   public void onDataChange(DataSnapshot pDataSnapshot) {
 		    	for (DataSnapshot child : pDataSnapshot.getChildren()) {
 	                 for (DataSnapshot mData : child.getChildren()) {
-	                	 System.out.println(mData);
-	                	 Map<String,String> map=(Map<String,String>) mData;
-	                	 map.get("FacaeBookURL");
+	    //            	 System.out.println(mData);
+	                	 
 	                    }
 	                }
 		    }
@@ -90,8 +89,8 @@ private static FirebaseApp mfirebaseApp = null;
 		    public void onCancelled(DatabaseError pDatabaseError) {
 		        System.out.println("The read failed: " + pDatabaseError.getCode());
 		    }
-		};*/
-		/*lRef.addValueEventListener(postListener);*/
+		};
+		lRef.addValueEventListener(postListener);
 		
 		return null;
 		

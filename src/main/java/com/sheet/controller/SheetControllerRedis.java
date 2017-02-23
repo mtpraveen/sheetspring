@@ -40,18 +40,14 @@ public class SheetControllerRedis {
 		return new ModelAndView("display", "sheetDetails", sheetinfo);
 
 	}
-	/*
+	/**
 	 * Storing into firebase database
 	 */
 	public ModelAndView updateDatabse()
 	{
 		System.out.println("storing into firebase");
 		List<SheetModel> getdata =mSheetService.displayAllData();
-		
-	//	Map<String, HashMap<String, String>> mapKey = new HashMap<String, HashMap<String, String>>();
-			
-		
-		
+
 		for(SheetModel l:getdata)
 		{	
 			Map<String,String> map = new HashMap<String, String>();
@@ -73,6 +69,7 @@ public class SheetControllerRedis {
 				map.put("Domain",domain);
 				map.put("EngineerStatus",status);
 				map.put("Image",profile);
+				
 				mKey=l.getTimestamp();
 				FireBaseDao.saveDataToFireBase(mKey,map);
 			}

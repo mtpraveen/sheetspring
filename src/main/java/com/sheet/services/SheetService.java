@@ -24,9 +24,11 @@ public interface SheetService {
 	
 	/** get url data . */
 	public List getURLData();
-
+	
+	/** get  suggestion data from database based on keyword . */
 	public List<String> getSuggestion(String name);
-
+	
+	/** get  data from database based on keyword . */
 	public List<SheetModel> getSearchNameData(String pName);
 
 		

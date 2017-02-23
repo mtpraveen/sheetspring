@@ -59,7 +59,7 @@ import com.sheet.model.SheetModel;
 import com.sheet.services.SheetService;
 
 @Controller
-//@EnableScheduling
+@EnableScheduling
 public class SheetController {
 	@Autowired
 	SheetService mSheetService;
@@ -116,7 +116,7 @@ public class SheetController {
 		GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(HTTP_TRANSPORT, JSON_FACTORY,
 				clientSecrets, SCOPES).setDataStoreFactory(DATA_STORE_FACTORY).setAccessType("offline").build();
 		Credential credential = new AuthorizationCodeInstalledApp(flow, new LocalServerReceiver()).authorize("user");
-		System.out.println("Credentials saved to " + DATA_STORE_DIR.getAbsolutePath());
+		System.out.println("credentials " + DATA_STORE_DIR.getAbsolutePath());
 		return credential;
 	}
 
@@ -165,6 +165,11 @@ public class SheetController {
 		return new ModelAndView("display", "sheetDetails", sheetinfo);
 
 	}
+	/**
+	 * implementation part of redis pub/sub
+	 * 
+	 * @return display success page.
+	 */
 
 	@RequestMapping(value = "/sendmessage", method = RequestMethod.GET)
 	public ModelAndView readSheetData() throws Exception {
@@ -173,6 +178,12 @@ public class SheetController {
 		return new ModelAndView("success");
 
 	}
+	/**
+	 * get the all suggestions from database fpr particular keyword search
+	 * 
+	 * @return response page.
+	 *
+	 */
 	@RequestMapping(value = "/getSuggestion", method = RequestMethod.POST, produces = "application/json")
 	public @ResponseBody void getSuggestion(HttpServletResponse response, HttpServletRequest request) {
 

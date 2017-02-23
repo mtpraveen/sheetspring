@@ -5,6 +5,12 @@
 <html>
 <head>
 <title>Home Page</title>
+<style>
+table {
+    border-collapse: collapse;
+    border: 1px solid black;
+}
+</style>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet"
 	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
@@ -28,7 +34,7 @@
 					class="name" title="Engg Name" value="" />
 			</div>
 		</div>
-		<button type="submit" class="btn btn-primary">Submit</button>
+		<button type="submit" class="btn btn-default">Search</button>
 	</form>
 </body>
 </html>

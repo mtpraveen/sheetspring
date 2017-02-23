@@ -62,11 +62,17 @@ public class SheetServiceImpl implements SheetService {
 		List  sheetURLList =mSheetDao.getURLData();
 		return sheetURLList;
 	}
+	/**
+	 * get  suggestion data from database based on keyword.
+	 */
 	@Override
 	public List<String> getSuggestion(String name) {
 		List  sheetSuggestion =mSheetDao.getSuggestion(name);
 		return sheetSuggestion;
 	}
+	/**
+	 * get  data from database based on keyword.
+	 */
 	@Override
 	public List<SheetModel> getSearchNameData(String pName) {
 		List<SheetModel> sheetSearchDetails = mSheetDao.getSearchNameData(pName);

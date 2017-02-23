@@ -11,7 +11,7 @@
   
   </head>
 <body>
-<div class="container">
+
 <center><h1> ${data.name}</h1></center>
 <table width="600" height="600" bordercolor="black" cellpadding="10px" bgcolor="FloralWhite"
 	cellspacing="10px" align="center">
@@ -60,11 +60,11 @@
 		<tr>
 		<tr>
 
-			<td><a href="sheetDetails"><button type="button" class="btn btn-info">back</button></a></td>
+	<div class="container">		<td><a href="sheetDetails"><button type="button" class="btn btn-info">back</button></a></td>
 
-		</tr>
+		 </div></tr>
 	</c:forEach>
 </table>
-  </div>
+ 
 </body>
 </html>
